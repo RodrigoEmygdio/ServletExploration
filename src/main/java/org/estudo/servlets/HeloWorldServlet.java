@@ -1,5 +1,6 @@
 package org.estudo.servlets;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -12,27 +13,36 @@ import java.util.logging.Logger;
 
 public class HeloWorldServlet extends HttpServlet {
 
-    Logger logger = Logger.getLogger(getClass().getName());
+    static  Logger logger = Logger.getLogger(HeloWorldServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info("Method doGet is executing .....");
 
-        PrintWriter out = resp.getWriter();
-        resp.setContentType("text/json");
+        try (PrintWriter out = resp.getWriter()) {
+            resp.setContentType("text/json");
 
-        if(req.getMethod().equals("HEAD"))
-            return;
-        JSONObject responseJson = new JSONObject();
-        responseJson.put("message", "Hello World " + req.getParameter("name"));
-        out.println(responseJson);
+            if (req.getMethod().equals("HEAD"))
+                return;
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("message", "Hello World " + req.getParameter("name"));
+            out.println(responseJson);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info("Method doPost is executing and calling doGet");
-        this.doGet(req, resp);
+        try {
+            this.doGet(req, resp);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override

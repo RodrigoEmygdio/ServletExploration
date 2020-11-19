@@ -11,6 +11,10 @@
     <servlet>
         <servlet-name>Counter</servlet-name>
         <servlet-class>org.estudo.servlets.SimpleCounter</servlet-class>
+        <init-param>
+            <param-name>InitialCounter</param-name>
+            <param-value>10</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>Counter</servlet-name>
